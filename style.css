@@ -9,6 +9,7 @@
     width: 500px;
     height: 580px;
     position: absolute;
+    z-index: 0;
 }
 
 .ground {
@@ -17,6 +18,7 @@
     height: 150px;
     position: absolute;
     top: 580px;
+    z-index: 0;
 }
 
 .bird {
@@ -24,4 +26,11 @@
     position: absolute;
     width: 60px;
     height: 45px;
+}
+
+.obstacle {
+    background-color: green;
+    width: 60px;
+    height: 300px;
+    position: absolute;
 }
