@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let birdLeftSide = 220;
     let birdBottom = 100;
     let gravity = 2;
-
+    let gap = 425;
     let isOver = false;
 
     function start() {
@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function control(event) {
         if (event.code === "Space") jump();
+        //console.log(birdBottom);
     }
     document.addEventListener('keyup', control);
 
@@ -34,29 +35,48 @@ document.addEventListener("DOMContentLoaded", () => {
         let obstacleLeftSide = skyWidth;
         const obstacleBottom = Math.random() * 60;
         const obstacle = document.createElement('div');
-        obstacle.classList.add('obstacle');
+        const topObstacle = document.createElement('div');
+        if (!isOver) {
+            obstacle.classList.add('obstacle');
+            topObstacle.classList.add('top-obstacle');
+        }
         gameDisplay.appendChild(obstacle);
+        gameDisplay.appendChild(topObstacle);
         obstacle.style.left = obstacleLeftSide + 'px';
+        topObstacle.style.left = obstacleLeftSide + 'px';
         obstacle.style.bottom = obstacleBottom + 'px';
+        topObstacle.style.bottom = obstacleBottom + gap + 'px';
 
         function moveObstacle() {
             obstacleLeftSide -= 2;
             obstacle.style.left = obstacleLeftSide + 'px';
+            topObstacle.style.left = obstacleLeftSide + 'px';
             if (obstacleLeftSide === -60) {
                 clearInterval(obstacleMove);
                 gameDisplay.removeChild(obstacle);
+                gameDisplay.removeChild(topObstacle);
             }
-            if (obstacleLeftSide > 200 && obstacleLeftSide < 280 && birdLeftSide === 220
-                || birdBottom === 0) gameOver();
+            if (isOver) clearInterval(obstacleMove);
+            if (isGameOver(obstacleLeftSide, obstacleBottom)) {
+                gameOver();
+                clearInterval(obstacleMove);
+                console.log(birdLeftSide + " " + obstacleLeftSide);
+            }
         }
         const obstacleMove = setInterval(moveObstacle, 20);
-        setTimeout(generateObstacle, 3000);
+        if (!isOver) setTimeout(generateObstacle, Math.random() * 3000 + 1000);
     }
     generateObstacle();
 
+    function isGameOver(obstacleLeft, obstacleBottom) {
+        return obstacleLeft > 165 && obstacleLeft < 280 && birdLeftSide === 220
+            && (birdBottom < obstacleBottom + 150 || birdBottom > obstacleBottom + gap - 195)
+            || birdBottom === 0;
+    }
+
     function gameOver() {
-        clearInterval(fallDown);
         isOver = true;
+        clearInterval(fallDown);
         document.removeEventListener('keyup', control);
     }
 
